@@ -21,6 +21,7 @@
 #include "analyze-compare-versions.h"
 #include "analyze-condition.h"
 #include "analyze-critical-chain.h"
+#include "analyze-dlopen-metadata.h"
 #include "analyze-dot.h"
 #include "analyze-dump.h"
 #include "analyze-exit-status.h"
@@ -691,6 +692,7 @@ static int run(int argc, char *argv[]) {
                 { "srk",               VERB_ANY, 1,        0,            verb_srk               },
                 { "architectures",     VERB_ANY, VERB_ANY, 0,            verb_architectures     },
                 { "smbios11",          VERB_ANY, 1,        0,            verb_smbios11          },
+                { "dlopen-metadata",   2,        2,        0,            verb_dlopen_metadata   },
                 {}
         };
 
