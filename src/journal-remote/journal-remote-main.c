@@ -212,8 +212,17 @@ static int process_http_upload(
         if (*upload_data_size) {
                 log_trace("Received %zu bytes", *upload_data_size);
 
-                r = journal_importer_push_data(&source->importer,
-                                               upload_data, *upload_data_size);
+                if (source->compression != COMPRESSION_NONE) {
+                        _cleanup_free_ char *buf = NULL;
+                        size_t buf_size;
+
+                        r = decompress_blob(source->compression, upload_data, *upload_data_size, (void **) &buf, &buf_size, DATA_SIZE_MAX);
+                        if (r < 0)
+                                return mhd_respondf(connection, r, MHD_HTTP_BAD_REQUEST, "Decompression of received blob failed.");
+
+                        r = journal_importer_push_data(&source->importer, buf, buf_size);
+                } else
+                        r = journal_importer_push_data(&source->importer, upload_data, *upload_data_size);
                 if (r < 0)
                         return mhd_respond_oom(connection);
 
